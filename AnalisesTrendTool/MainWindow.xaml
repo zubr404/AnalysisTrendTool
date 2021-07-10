@@ -1,0 +1,204 @@
+﻿<Window x:Class="AnalisesTrendTool.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:AnalisesTrendTool"
+        xmlns:localconvert="clr-namespace:AnalisesTrendTool.ViewModels"
+        mc:Ignorable="d"
+        Title="Analises trend tool" Height="450" Width="800" WindowStyle="SingleBorderWindow" WindowState="Maximized">
+    <Window.Resources>
+        <local:ModelView x:Key="ViewModel"/>
+        <localconvert:DataGridHeightConverter x:Key="heightConverter"/>
+
+        <SolidColorBrush x:Key="GridBack" Color="White"></SolidColorBrush>
+        <SolidColorBrush x:Key="GridFore" Color="Black"></SolidColorBrush>
+        <SolidColorBrush x:Key="ElementBack" Color="White"></SolidColorBrush>
+
+        <Style TargetType="{x:Type DataGrid}">
+            <Setter Property="ColumnHeaderStyle" Value="{DynamicResource ColumnHeaderStyle1}"/>
+        </Style>
+        <Style x:Key="ColumnHeaderStyle1" TargetType="DataGridColumnHeader">
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="Padding" Value="5"></Setter>
+            <Setter Property="Background" Value="{StaticResource GridBack}"/>
+            <Setter Property="Foreground" Value="{StaticResource GridFore}"/>
+            <Setter Property="FontSize" Value="12" />
+        </Style>
+    </Window.Resources>
+    <Window.DataContext>
+        <Binding Source="{StaticResource ViewModel}"/>
+    </Window.DataContext>
+    <Grid Background="{StaticResource GridBack}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+            <Button Grid.Row="4" Grid.Column="1" Margin="5" Height="20" Width="75" Style="{StaticResource RectangleButtonMy}" Foreground="{StaticResource GridFore}" BorderThickness="0.75"
+                                Background="{StaticResource ElementBack}" BorderBrush="{StaticResource GridFore}" Command="{Binding SettingsShowCommand}">
+                <TextBlock><Run Text="Settings"/></TextBlock>
+            </Button>
+            <CheckBox VerticalAlignment="Center" Margin="5" Foreground="{StaticResource GridFore}" IsChecked="{Binding MainScrinView.IsOnlyTrend, Mode=TwoWay}">trend only</CheckBox>
+            <CheckBox VerticalAlignment="Center" Margin="5" Foreground="{StaticResource GridFore}" IsChecked="{Binding MainScrinView.IsNoDataHiden, Mode=TwoWay}">no data hiden</CheckBox>
+            <CheckBox VerticalAlignment="Center" Margin="5" Foreground="{StaticResource GridFore}" IsChecked="{Binding MainScrinView.IsIntradayOnly, Mode=TwoWay}">intraday only</CheckBox>
+        </StackPanel>
+        
+        <!--MAIN SCRIN-->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition></RowDefinition>
+                <RowDefinition Height="20"></RowDefinition>
+            </Grid.RowDefinitions>
+
+
+            <!--автодобавления DataGrid-->
+            <ListBox x:Name="RootBox" Grid.Column="1" ItemsSource="{Binding MainScrinView.AnaliseTrendResultsList}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <DataGrid Grid.Row="0" Width="Auto" Height="{Binding ElementName=RootBox, Path=ActualHeight, UpdateSourceTrigger=PropertyChanged, ConverterParameter=0.93, Converter={StaticResource heightConverter}}" VerticalScrollBarVisibility="Hidden" AutoGenerateColumns="False" CanUserAddRows="False" BorderThickness="0" RowHeaderWidth="0"
+                              Background="{StaticResource GridBack}" ItemsSource="{Binding}"
+                              GridLinesVisibility="Vertical" VerticalAlignment="Top" HorizontalAlignment="Left"
+                              VerticalGridLinesBrush="Transparent" RenderOptions.EdgeMode="Unspecified" FontSize="10" Foreground="{StaticResource GridFore}">
+                            <DataGrid.RowStyle>
+                                <Style TargetType="{x:Type DataGridRow}">
+                                    <Setter Property="Background" Value="{StaticResource GridBack}" />
+                                    <Setter Property="Height" Value="20"/>
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="#7F767676"/>
+                                        </Trigger>
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter Property="Background" Value="Beige"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </DataGrid.RowStyle>
+                            <DataGrid.CellStyle>
+                                <Style TargetType="{x:Type DataGridCell}">
+                                    <Setter Property="BorderThickness" Value="0,0,0.25,0"/>
+                                    <Setter Property="BorderBrush" Value="{StaticResource GridBack}"/>
+                                    <Setter Property="Foreground" Value="{StaticResource GridFore}"/>
+                                    <Style.Triggers>
+                                        <!--<Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="Yellow"/>
+                        </Trigger>-->
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter Property="Background" Value="Transparent"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </DataGrid.CellStyle>
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Symbol" Width="Auto" Binding="{Binding Symbol}" IsReadOnly="True">
+                                    <DataGridTextColumn.CellStyle>
+                                        <Style TargetType="DataGridCell">
+                                            <Setter Property="Foreground" Value="{Binding ForeGround}"/>
+                                            <Setter Property="BorderThickness" Value="0,0,0.25,0"/>
+                                            <Setter Property="BorderBrush" Value="{StaticResource GridBack}"/>
+                                            <Style.Triggers>
+                                                <!--<Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="Yellow"/>
+                        </Trigger>-->
+                                                <Trigger Property="IsSelected" Value="True">
+                                                    <Setter Property="Background" Value="Transparent"/>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </DataGridTextColumn.CellStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn Header="Intreval" Width="Auto" Binding="{Binding Intreval}" IsReadOnly="True"/>
+                                <DataGridTextColumn Header="TrendStatus" Width="Auto" Binding="{Binding TrendStatus}" IsReadOnly="True"/>
+                                <DataGridTextColumn Width="Auto" Binding="{Binding CountPeriodTrendStatus}" IsReadOnly="True"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Top"></StackPanel>
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+            </ListBox>
+            <!--***************************-->
+
+            <Label Grid.Row="1" Grid.Column="1" Padding="0" HorizontalAlignment="Right" Margin="0,0,10,0" Foreground="{Binding MainScrinView.StateLabelForeground}" Content="{Binding MainScrinView.StateLabelText}"></Label>
+
+        </Grid>
+
+        <!--SETTINGS SCRIN {Binding SettingsScrinView.Visibility}-->
+        <Grid Grid.RowSpan="2" Background="{StaticResource GridBack}" Visibility="{Binding SettingsScrinView.Visibility}">
+            <Grid Grid.Column="1" Width="430" HorizontalAlignment="Left">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0" Margin="15,15,15,5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="300"></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Height="20" Background="{StaticResource ElementBack}" Foreground="{StaticResource GridFore}" Text="{Binding SettingsScrinView.PairsSaveFileNameSettings, Mode=OneWay}"></TextBlock>
+                    <Button Grid.Column="1" Margin="5,0,0,0" Style="{StaticResource RectangleButtonMy}" Foreground="{StaticResource GridFore}" BorderThickness="0.75"
+                                Background="{StaticResource ElementBack}" BorderBrush="{StaticResource GridFore}" Command="{Binding SettingsScrinView.GetPairsFileSaveCommand}">
+                        <TextBlock><Run Text="PAIRS SAVE"/></TextBlock>
+                    </Button>
+                </Grid>
+
+                <Grid Grid.Row="1" Margin="15,5,15,5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="300"></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Height="20" Background="{StaticResource ElementBack}" Foreground="{StaticResource GridFore}" Text="{Binding SettingsScrinView.PairsFileNameSettings, Mode=OneWay}"></TextBlock>
+                    <Button Grid.Column="1" Margin="5,0,0,0" Style="{StaticResource RectangleButtonMy}" Foreground="{StaticResource GridFore}" BorderThickness="0.75"
+                                Background="{StaticResource ElementBack}" BorderBrush="{StaticResource GridFore}" Command="{Binding SettingsScrinView.GetPairsFileCommand}">
+                        <TextBlock><Run Text="PAIRS"/></TextBlock>
+                    </Button>
+                </Grid>
+
+                <Grid Grid.Row="2" Margin="15,0,15,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition Height="30"></RowDefinition>
+                    </Grid.RowDefinitions>
+
+                    <Label Grid.Row="0" Foreground="{StaticResource GridFore}" Background="{StaticResource ElementBack}">EMA 1</Label>
+                    <Label Grid.Row="1" Foreground="{StaticResource GridFore}" Background="{StaticResource ElementBack}">EMA 2</Label>
+                    <Label Grid.Row="2" Foreground="{StaticResource GridFore}" Background="{StaticResource ElementBack}">EMA 3</Label>
+                    <Label Grid.Row="3" Foreground="{StaticResource GridFore}" Background="{StaticResource ElementBack}">Number of bars to analyze</Label>
+
+                    <TextBox Grid.Row="0" Grid.Column="1" Padding="5,0,0,0" Foreground="{StaticResource GridFore}" Background="{StaticResource ElementBack}" BorderBrush="Transparent" Text="{Binding SettingsScrinView.EmaPeriodSettings1, Mode=TwoWay}"></TextBox>
+                    <TextBox Grid.Row="1" Grid.Column="1" Padding="5,0,0,0" Foreground="{StaticResource GridFore}" Background="{StaticResource ElementBack}" BorderBrush="Transparent" Text="{Binding SettingsScrinView.EmaPeriodSettings2, Mode=TwoWay}"></TextBox>
+                    <TextBox Grid.Row="2" Grid.Column="1" Padding="5,0,0,0" Foreground="{StaticResource GridFore}" Background="{StaticResource ElementBack}" BorderBrush="Transparent" Text="{Binding SettingsScrinView.EmaPeriodSettings3, Mode=TwoWay}"></TextBox>
+                    <TextBox Grid.Row="3" Grid.Column="1" Padding="5,0,0,0" Foreground="{StaticResource GridFore}" Background="{StaticResource ElementBack}" BorderBrush="Transparent" Text="{Binding SettingsScrinView.NumberBarAnalysisSettings, Mode=TwoWay}"></TextBox>
+                    
+                    <Button Grid.Row="5" Grid.Column="0" Height="20" Width="85" Style="{StaticResource RectangleButtonMy}" Foreground="{StaticResource GridFore}" BorderThickness="0.75"
+                                Background="{StaticResource ElementBack}" BorderBrush="{StaticResource GridFore}" Command="{Binding SettingsScrinView.CancelCommand}">
+                        <TextBlock><Run Text="CANCEL"/></TextBlock>
+                    </Button>
+                    <Button Grid.Row="5" Grid.Column="1" Height="20" Width="85" Style="{StaticResource RectangleButtonMy}" Foreground="{StaticResource GridFore}" BorderThickness="0.75"
+                                Background="{StaticResource ElementBack}" BorderBrush="{StaticResource GridFore}" Command="{Binding SettingsScrinView.SaveCommand}">
+                        <TextBlock><Run Text="SAVE"/></TextBlock>
+                    </Button>
+                </Grid>
+            </Grid>
+        </Grid>
+    </Grid>
+    
+</Window>
